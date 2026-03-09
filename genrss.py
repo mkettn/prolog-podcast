@@ -49,8 +49,7 @@ with open(OUTPUT_FILE, 'w') as ofd:
     ofd.write("</feed>")
 
 with open(FLIST, 'w') as ofd:
-    for f in [OUTPUT_FILE] + audiofiles:
-        print(f'"{f}"', file=ofd, sep=" ")
+    ofd.write(" ".join(map(lambda x: f'"{x}"', [OUTPUT_FILE] + audiofiles)))
 
 
 
