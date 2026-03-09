@@ -2,6 +2,7 @@
 from datetime import date, timedelta
 from glob import glob
 from os.path import basename,splitext
+from os import mkdir, rename
 from uuid import UUID
 from hashlib import sha3_224
 from sys import stdout
@@ -13,6 +14,10 @@ ROOT="mkettn.github.io/prolog-podcast"
 FLIST="flist.txt"
 TITLE="Prolog von Ohrid (alter Kalender)"
 OUTPUT_FILE="altkal.xml"
+OUTDIR="upload/"
+
+mkdir(OUTDIR)
+mkdir(OUTDIR+FOLDER)
 
 ID=UUID(bytes=sha3_224(TITLE.encode()).digest()[:16])
 today = date.today()-OFFSET
@@ -23,6 +28,7 @@ audiofiles = []
 def get_xml(d:date):
     s = "{:s}/{:d}. *.ogg".format(FOLDER, int(d.strftime("%j")))
     f = glob(s)[0]
+    rename(f, OUTDIR+f)
     audiofiles.append(f)
     t = splitext(basename(f))[0]
     u = d.strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -35,7 +41,7 @@ def get_xml(d:date):
     <summary>Prolog von Ohrid Episode bereitgestellt von www.orthodoxinfo.de</summary>
 </entry>"""
 
-with open(OUTPUT_FILE, 'w') as ofd:
+with open(OUTDIR+OUTPUT_FILE, 'w') as ofd:
     ofd.write(f"""<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom">
 	<title>{TITLE}</title>
 	<subtitle>Quelle: www.orthodoxinfo.de</subtitle>
@@ -47,10 +53,3 @@ with open(OUTPUT_FILE, 'w') as ofd:
         d = today-timedelta(days=i)
         ofd.write(get_xml(d))
     ofd.write("</feed>")
-
-with open(FLIST, 'w') as ofd:
-    ofd.write(" ".join(map(lambda x: f'"{x}"', [OUTPUT_FILE] + audiofiles)))
-    ofd.write("\n")
-
-
-

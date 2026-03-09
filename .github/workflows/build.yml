@@ -25,19 +25,7 @@ jobs:
           python-version: '3.11'
       - name: generate files
         run: ./genrss.py
-      - name: read file list
-        id: flist
-        shell: bash
-        run: |
-          echo "Files:"
-          cat flist.txt
-          {
-            echo "paths<<EOF"
-            cat flist.txt
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-          cat "$GITHUB_OUTPUT"
       - name: upload artifacts
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ steps.flist.outputs.paths }}
+          path: upload/
