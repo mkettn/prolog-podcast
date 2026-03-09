@@ -51,7 +51,7 @@ with open(OUTPUT_FILE, 'w') as ofd:
 with open(FLIST, 'w') as ofd:
     print(OUTPUT_FILE, file=ofd)
     ofd.write("\n".join(audiofiles))
-
+    ofd.write("\n")
 
 
 
