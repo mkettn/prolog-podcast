@@ -49,9 +49,8 @@ with open(OUTPUT_FILE, 'w') as ofd:
     ofd.write("</feed>")
 
 with open(FLIST, 'w') as ofd:
-    print(OUTPUT_FILE, file=ofd)
-    ofd.write("\n".join(audiofiles))
-    ofd.write("\n")
+    for f in [OUTPUT_FILE].extend(audiofiles):
+        print(f'"{f}"', file=ofd)
 
 
 
