@@ -2,7 +2,7 @@
 from datetime import date, timedelta
 from glob import glob
 from os.path import basename,splitext, getsize
-from os import mkdir, rename
+from os import mkdir, link
 from uuid import UUID
 from hashlib import sha3_224
 from sys import stdout
@@ -31,13 +31,14 @@ def get_xml(d:date):
     s = "{:s}/{:d}. *.ogg".format(FOLDER, int(d.strftime("%j")))
     f = glob(s)[0]
     l = getsize(f)
-    rename(f, OUTDIR+f)
+    new_loc = FOLDER+d.strftime("/%m%d.ogg")
+    link(f, OUTDIR+new_loc)
     t = splitext(basename(f))[0]
     u = d.strftime("%Y-%m-%dT%H:%M:%SZ")
     _id = UUID(bytes=sha3_224(f.encode()).digest()[:16])
     return f"""<entry>
     <title>{t}</title>
-    <link rel="enclosure" href="https://{ROOT}/{f}"
+    <link rel="enclosure" href="https://{ROOT}/{new_loc}"
     type="audio/ogg"
     length="12345678"/>
     <id>urn:uuid:{_id}</id>
