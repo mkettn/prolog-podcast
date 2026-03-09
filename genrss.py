@@ -50,6 +50,7 @@ with open(OUTPUT_FILE, 'w') as ofd:
 
 with open(FLIST, 'w') as ofd:
     ofd.write(" ".join(map(lambda x: f'"{x}"', [OUTPUT_FILE] + audiofiles)))
+    ofd.write("\n")
 
 
 
