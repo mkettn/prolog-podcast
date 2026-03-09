@@ -1,0 +1,42 @@
+name: Build and Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '0 2 * * *'  # 02:00 every day
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout Repository
+        uses: actions/checkout@v4
+
+      - name: setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: generate files
+        run: ./genrss.py
+      - name: read file list
+        id: flist
+        shell: bash
+        run: |
+          echo "Files:"
+          cat flist.txt
+          {
+            echo "paths<<EOF"
+            cat flist.txt
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+      - name: upload artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ steps.flist.outputs.paths }}
