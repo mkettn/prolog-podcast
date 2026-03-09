@@ -36,6 +36,7 @@ jobs:
             cat flist.txt
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
       - name: upload artifacts
         uses: actions/upload-pages-artifact@v3
         with:
