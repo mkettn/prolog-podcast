@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from datetime import date, timedelta
 from glob import glob
-from os.path import basename,splitext
+from os.path import basename,splitext, getsize
 from os import mkdir, rename
 from uuid import UUID
 from hashlib import sha3_224
@@ -15,9 +15,11 @@ FLIST="flist.txt"
 TITLE="Prolog von Ohrid (alter Kalender)"
 OUTPUT_FILE="altkal.xml"
 OUTDIR="upload/"
-
-mkdir(OUTDIR)
-mkdir(OUTDIR+FOLDER)
+try:
+    mkdir(OUTDIR)
+    mkdir(OUTDIR+FOLDER)
+except:
+    pass
 
 ID=UUID(bytes=sha3_224(TITLE.encode()).digest()[:16])
 today = date.today()-OFFSET
@@ -28,14 +30,16 @@ audiofiles = []
 def get_xml(d:date):
     s = "{:s}/{:d}. *.ogg".format(FOLDER, int(d.strftime("%j")))
     f = glob(s)[0]
+    l = getsize(f)
     rename(f, OUTDIR+f)
-    audiofiles.append(f)
     t = splitext(basename(f))[0]
     u = d.strftime("%Y-%m-%dT%H:%M:%SZ")
     _id = UUID(bytes=sha3_224(f.encode()).digest()[:16])
     return f"""<entry>
     <title>{t}</title>
-    <link href="{ROOT}/{f}"/>
+    <link rel="enclosure" href="https://{ROOT}/{f}"
+    type="audio/ogg"
+    length="12345678"/>
     <id>urn:uuid:{_id}</id>
     <updated>{u}</updated>
     <summary>Prolog von Ohrid Episode bereitgestellt von www.orthodoxinfo.de</summary>
